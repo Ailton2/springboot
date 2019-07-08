@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html"> 
+
+<h:head></h:head> 
+<body> 
+<h1>Cadatro de de Clientes </h1>
+<h:form id="frmCliente">
+ Nome:<h:inputText value="#{clienteController.cliente.nome}" id="nome"/>
+ 
+ Tipo Contato:<h:selectOneMenu id="seltipocontato" value="#{clienteController.contato.tipoContato}"  converter="#{tipoContatoConverter}">
+  <f:selectItem noSelectionOption="true" itemValue="" itemLabel="Selecione"/>
+   <f:selectItems value="#{tipoContatoController.tipoContatos}" var="t" itemLabel="#{t.descricao}"/>
+ </h:selectOneMenu>
+Contato:<h:inputText value="#{clienteController.contato.descricao}" id="itcontato"/>
+<h:commandButton action="#{clienteController.adicionarContato()}" value="+" >
+<f:ajax execute="seltipocontato itcontato" render="itcontato dtcontatos"/> 
+</h:commandButton>
+
+<h:dataTable border="1"  value="#{clienteController.cliente.contatos}" var="contato" id="dtcontatos">
+   <h:column>
+  #{contato.tipoContato.descricao}
+  </h:column>
+  <h:column>
+  #{contato.descricao}
+  </h:column>
+  <h:column>
+    <h:commandButton action="#{clienteController.excluirContato(contato)}" value="-" >
+    <f:ajax  render="frmCliente:dtcontatos"/> 
+    </h:commandButton>
+  </h:column>
+
+</h:dataTable>
+Estado:<h:selectOneMenu value="#{clienteController.cliente.estado}" id="estado" converter="#{estadoConverter}">
+  <f:selectItem noSelectionOption="true" itemValue="" itemLabel="Selecione"/>
+   <f:selectItems value="#{estadoController.estados}" var="e" itemLabel="#{e.uf}"/>
+
+
+</h:selectOneMenu>
+<h:commandButton action="#{clienteController.salvar}"  value="Salvar">
+<f:ajax execute="frmCliente" render="frmCliente"> </f:ajax>
+</h:commandButton>
+
+
+<h:dataTable  value="#{clienteController.clientes}"  var="c" border="1" style="width: 100%" id="dtClientes">
+     <h:column >
+      <f:facet name="header">ID</f:facet>
+      #{c.id}
+     </h:column>
+
+     <h:column>
+      <f:facet name="header">NOME</f:facet>
+     #{c.nome  }
+     </h:column>
+     
+  
+     <h:column>
+     <f:facet name="header">UF</f:facet>
+     #{c.estado.uf}
+     </h:column>
+     
+       <h:column>
+      <f:facet name="header">Ação</f:facet>
+      <h:commandButton action="#{clienteController.excluir(c)}" value="Excluir">
+      <f:ajax render="frmCliente:dtClientes"/>
+      </h:commandButton>
+      
+      <h:commandButton action="#{clienteController.editar(c)}" value="Editar">
+      <f:ajax render="frmCliente"/>
+      </h:commandButton>
+       <h:commandButton rendered="#{clienteController.modoEdicao}"  action="#{clienteController.cancelar}" value="Cancelar">
+      <f:ajax render="frmCliente"/>
+      </h:commandButton>
+      
+     </h:column>
+
+</h:dataTable>
+</h:form>
+</body> 
+</html>
